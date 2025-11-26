@@ -44,7 +44,13 @@ var contentPayload: ContentPayload = {
     types: [],
 };
 
-const urlPath = `${Astro.url.pathname.replace(/\/$/, '')}/`;
+// For CMS queries, always include the locale prefix in the path
+// even when prefixDefaultLocale is false, because CMS content is stored with locale paths
+const localePrefix = `/${lang}`;
+const currentPath = Astro.url.pathname.replace(/\/$/, '');
+const urlPath = currentPath.startsWith(localePrefix)
+    ? `${currentPath}/`
+    : `${localePrefix}${currentPath}/`;
 const urlBase = Astro.url.origin;
 
 // Fetch content in the current locale (Astro's i18n handles fallback via rewrites)
